@@ -98,3 +98,4 @@ C:\Users\ANNE6211\Source\Repos\ReqResIn\ReqResIn\obj\Debug\netcoreapp3.1\ReqResI
 C:\Users\ANNE6211\Source\Repos\ReqResIn\ReqResIn\obj\Debug\netcoreapp3.1\ReqResIn.dll
 C:\Users\ANNE6211\Source\Repos\ReqResIn\ReqResIn\obj\Debug\netcoreapp3.1\ReqResIn.pdb
 C:\Users\ANNE6211\Source\Repos\ReqResIn\ReqResIn\obj\Debug\netcoreapp3.1\ReqResIn.genruntimeconfig.cache
+C:\Users\ANNE6211\Source\Repos\ReqResIn\ReqResIn\obj\Debug\netcoreapp3.1\ReqResIn.csprojAssemblyReference.cache

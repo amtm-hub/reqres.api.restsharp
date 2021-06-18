@@ -15,7 +15,7 @@ namespace ReqResIn
         }
 
         [Test]
-        public void TestRegisterSuccessful()
+        public void TestRegister()
         {
             dynamic body = new JObject();
             body.email = "eve.holt@reqres.in";
@@ -30,6 +30,22 @@ namespace ReqResIn
             ((HttpStatusCode) response.StatusCode).Should().Be(HttpStatusCode.OK);
             ((RespRegister) content).Id.Should().NotBe(null);
             ((RespRegister) content).Token.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Test]
+        public void TestRegisterError()
+        {
+            dynamic body = new JObject();
+            body.email = "sydney@fife";
+
+            var api = new RestApiHelper<RespError>();
+            var client = api.SetUrl("/api/register");
+            var request = api.CreatePostRequest(body);
+            var response = api.GetResponse(client, request);
+            var content = api.GetContent<RespError>(response);
+
+            ((HttpStatusCode) response.StatusCode).Should().Be(HttpStatusCode.BadRequest);
+            ((RespError) content).Error.Should().Be("Missing password");
         }
     }
 }

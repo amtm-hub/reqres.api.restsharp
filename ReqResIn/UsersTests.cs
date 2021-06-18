@@ -4,6 +4,7 @@ using NUnit.Framework;
 using ReqResIn.Dto;
 using ReqResIn.Helpers;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 
@@ -103,6 +104,19 @@ namespace ReqResIn
             ((RespSingleUser)content).Data.First_Name.Should().NotBeNullOrWhiteSpace();
             ((RespSingleUser)content).Data.Id.Should().NotBe(null);
             ((RespSingleUser)content).Data.Last_Name.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Test]
+        public void TestSingleUserNotFound()
+        {
+            var api = new RestApiHelper<object>();
+            var client = api.SetUrl("/api/users/23");
+            var request = api.CreateGetRequest();
+            var response = api.GetResponse(client, request);
+            var content = api.GetContent<object>(response);
+
+            ((HttpStatusCode) response.StatusCode).Should().Be(HttpStatusCode.NotFound);
+            ((IEnumerable) content).Should().BeEmpty();
         }
     }
 }
