@@ -5,40 +5,41 @@ using ReqResIn.Dto;
 using ReqResIn.Helpers;
 using System.Net;
 
-namespace ReqResIn
+namespace ReqResIn.Tests
 {
-    public class LoginTests
+    public class RegisterTests
     {
         [SetUp]
         public void Setup()
         {
         }
 
-        [TestCase("eve.holt@reqres.in", "cityslicka")]
-        public void TestLogin(string email, string password)
+        [TestCase("eve.holt@reqres.in", "pistol")]
+        public void TestRegister(string email, string password)
         {
             dynamic body = new JObject();
             body.email = email;
             body.password = password;
 
-            var api = new RestApiHelper<RespLogin>();
-            var client = api.SetUrl("/api/login");
+            var api = new RestApiHelper<RespRegister>();
+            var client = api.SetUrl("/api/register");
             var request = api.CreatePostRequest(body);
             var response = api.GetResponse(client, request);
-            var content = api.GetContent<RespLogin>(response);
+            var content = api.GetContent<RespRegister>(response);
 
-            ((HttpStatusCode)response.StatusCode).Should().Be(HttpStatusCode.OK);
-            ((RespLogin)content).Token.Should().NotBeNullOrWhiteSpace();
+            ((HttpStatusCode) response.StatusCode).Should().Be(HttpStatusCode.OK);
+            ((RespRegister) content).Id.Should().NotBe(null);
+            ((RespRegister) content).Token.Should().NotBeNullOrWhiteSpace();
         }
 
-        [TestCase("peter@klaven")]
-        public void TestLoginError(string email)
+        [TestCase("sydney@fife")]
+        public void TestRegisterError(string email)
         {
             dynamic body = new JObject();
             body.email = email;
 
             var api = new RestApiHelper<RespError>();
-            var client = api.SetUrl("/api/login");
+            var client = api.SetUrl("/api/register");
             var request = api.CreatePostRequest(body);
             var response = api.GetResponse(client, request);
             var content = api.GetContent<RespError>(response);

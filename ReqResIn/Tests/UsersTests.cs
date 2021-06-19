@@ -8,7 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 
-namespace ReqResIn
+namespace ReqResIn.Tests
 {
     public class UsersTests
     {
