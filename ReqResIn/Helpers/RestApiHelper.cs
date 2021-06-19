@@ -34,7 +34,7 @@ namespace ReqResIn.Helpers
         {
             _restRequest = new RestRequest(Method.PUT);
             _restRequest.AddHeader("Accept", "application/json");
-            _restRequest.AddParameter("application/json", value, ParameterType.RequestBody);
+            _restRequest.AddParameter("application/json", JsonConvert.SerializeObject(value), ParameterType.RequestBody);
             return _restRequest;
         }
 
