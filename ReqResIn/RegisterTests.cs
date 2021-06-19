@@ -14,12 +14,12 @@ namespace ReqResIn
         {
         }
 
-        [Test]
-        public void TestRegister()
+        [TestCase("eve.holt@reqres.in", "pistol")]
+        public void TestRegister(string email, string password)
         {
             dynamic body = new JObject();
-            body.email = "eve.holt@reqres.in";
-            body.password = "pistol";
+            body.email = email;
+            body.password = password;
 
             var api = new RestApiHelper<RespRegister>();
             var client = api.SetUrl("/api/register");
@@ -32,11 +32,11 @@ namespace ReqResIn
             ((RespRegister) content).Token.Should().NotBeNullOrWhiteSpace();
         }
 
-        [Test]
-        public void TestRegisterError()
+        [TestCase("sydney@fife")]
+        public void TestRegisterError(string email)
         {
             dynamic body = new JObject();
-            body.email = "sydney@fife";
+            body.email = email;
 
             var api = new RestApiHelper<RespError>();
             var client = api.SetUrl("/api/register");
