@@ -55,7 +55,7 @@ namespace ReqResIn.Tests
             ((HttpStatusCode)response.StatusCode).Should().Be(HttpStatusCode.OK);
             ((string)content.Name).Should().Be((string)body.name);
             ((string)content.Job).Should().Be((string)body.job);
-            ((DateTime)content.UpdatedAt).Should().BeOnOrAfter(now);
+            ((DateTime) content.UpdatedAt).Should().BeCloseTo(now, 2500);
         }
 
         [TestCase(2)]
