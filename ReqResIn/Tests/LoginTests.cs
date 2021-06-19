@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using ReqResIn.Dto;
 using ReqResIn.Helpers;
+using RestSharp;
 using System.Net;
 
 namespace ReqResIn.Tests
@@ -23,7 +24,7 @@ namespace ReqResIn.Tests
 
             var api = new RestApiHelper<RespLogin>();
             var client = api.SetUrl("/api/login");
-            var request = api.CreatePostRequest(body);
+            var request = api.CreateRequest(Method.POST, body, ParameterType.RequestBody);
             var response = api.GetResponse(client, request);
             var content = api.GetContent<RespLogin>(response);
 
@@ -39,12 +40,12 @@ namespace ReqResIn.Tests
 
             var api = new RestApiHelper<RespError>();
             var client = api.SetUrl("/api/login");
-            var request = api.CreatePostRequest(body);
+            var request = api.CreateRequest(Method.POST, body, ParameterType.RequestBody);
             var response = api.GetResponse(client, request);
             var content = api.GetContent<RespError>(response);
 
-            ((HttpStatusCode) response.StatusCode).Should().Be(HttpStatusCode.BadRequest);
-            ((RespError) content).Error.Should().Be("Missing password");
+            ((HttpStatusCode)response.StatusCode).Should().Be(HttpStatusCode.BadRequest);
+            ((RespError)content).Error.Should().Be("Missing password");
         }
     }
 }

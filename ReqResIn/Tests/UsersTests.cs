@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using ReqResIn.Dto;
 using ReqResIn.Helpers;
+using RestSharp;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace ReqResIn.Tests
 
             var api = new RestApiHelper<RespCreate>();
             var client = api.SetUrl("/api/users");
-            var request = api.CreatePostRequest(body);
+            var request = api.CreateRequest(Method.POST, body, ParameterType.RequestBody);
             var response = api.GetResponse(client, request);
             var content = api.GetContent<RespCreate>(response);
 
@@ -40,20 +41,21 @@ namespace ReqResIn.Tests
         public void TestUpdate(string name, string job, int param)
         {
             var now = DateTime.UtcNow;
+
             dynamic body = new JObject();
             body.name = name;
             body.job = job;
 
             var api = new RestApiHelper<RespUpdate>();
             var client = api.SetUrl($"/api/users/{param}");
-            var request = api.CreatePutRequest(body);
+            var request = api.CreateRequest(Method.PUT, body, ParameterType.RequestBody);
             var response = api.GetResponse(client, request);
             var content = api.GetContent<RespUpdate>(response);
 
-            ((HttpStatusCode) response.StatusCode).Should().Be(HttpStatusCode.OK);
+            ((HttpStatusCode)response.StatusCode).Should().Be(HttpStatusCode.OK);
             ((string)content.Name).Should().Be((string)body.name);
             ((string)content.Job).Should().Be((string)body.job);
-            ((DateTime) content.UpdatedAt).Should().BeOnOrAfter(now);
+            ((DateTime)content.UpdatedAt).Should().BeOnOrAfter(now);
         }
 
         [TestCase(2)]
@@ -61,11 +63,11 @@ namespace ReqResIn.Tests
         {
             var api = new RestApiHelper<object>();
             var client = api.SetUrl($"/api/users/{param}");
-            var request = api.CreateDeleteRequest();
+            var request = api.CreateRequest(Method.DELETE);
             var response = api.GetResponse(client, request);
             var content = api.GetContent<object>(response);
 
-            ((HttpStatusCode) response.StatusCode).Should().Be(HttpStatusCode.NoContent);
+            ((HttpStatusCode)response.StatusCode).Should().Be(HttpStatusCode.NoContent);
             content.Should().BeNull();
         }
 
@@ -73,13 +75,15 @@ namespace ReqResIn.Tests
         [TestCase(2)]
         public void TestListUsers(int param)
         {
+            var query = new Dictionary<string, string> { { "page", $"{param}" } };
+
             var api = new RestApiHelper<RespListUsers>();
             var client = api.SetUrl("/api/users");
-            var request = api.CreateGetRequest(new Dictionary<string, string> {{"page", $"{param}"}});
+            var request = api.CreateRequest(Method.GET, query, ParameterType.QueryString);
             var response = api.GetResponse(client, request);
             var content = api.GetContent<RespListUsers>(response);
 
-            ((HttpStatusCode) response.StatusCode).Should().Be(HttpStatusCode.OK);
+            ((HttpStatusCode)response.StatusCode).Should().Be(HttpStatusCode.OK);
             foreach (var datum in content.Data)
             {
                 datum.Avatar.Should().NotBeNullOrWhiteSpace();
@@ -96,7 +100,7 @@ namespace ReqResIn.Tests
         {
             var api = new RestApiHelper<RespSingleUser>();
             var client = api.SetUrl($"/api/users/{param}");
-            var request = api.CreateGetRequest();
+            var request = api.CreateRequest(Method.GET);
             var response = api.GetResponse(client, request);
             var content = api.GetContent<RespSingleUser>(response);
 
@@ -114,12 +118,12 @@ namespace ReqResIn.Tests
         {
             var api = new RestApiHelper<object>();
             var client = api.SetUrl($"/api/users/{param}");
-            var request = api.CreateGetRequest();
+            var request = api.CreateRequest(Method.GET);
             var response = api.GetResponse(client, request);
             var content = api.GetContent<object>(response);
 
-            ((HttpStatusCode) response.StatusCode).Should().Be(HttpStatusCode.NotFound);
-            ((IEnumerable) content).Should().BeEmpty();
+            ((HttpStatusCode)response.StatusCode).Should().Be(HttpStatusCode.NotFound);
+            ((IEnumerable)content).Should().BeEmpty();
         }
     }
 }

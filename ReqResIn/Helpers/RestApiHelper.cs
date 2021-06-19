@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using RestSharp;
 using System.Collections.Generic;
 
@@ -22,48 +21,37 @@ namespace ReqResIn.Helpers
             return _restClient;
         }
 
-        public RestRequest CreatePostRequest(JObject value)
+        public RestRequest CreateRequest(Method method)
         {
-            _restRequest = new RestRequest(Method.POST);
-            _restRequest.AddHeader("Accept", "application/json");
-            _restRequest.AddParameter("application/json", JsonConvert.SerializeObject(value), ParameterType.RequestBody);
-            return _restRequest;
-        }
-
-        public RestRequest CreatePutRequest(JObject value)
-        {
-            _restRequest = new RestRequest(Method.PUT);
-            _restRequest.AddHeader("Accept", "application/json");
-            _restRequest.AddParameter("application/json", JsonConvert.SerializeObject(value), ParameterType.RequestBody);
-            return _restRequest;
-        }
-
-        public RestRequest CreateGetRequest()
-        {
-            _restRequest = new RestRequest(Method.GET);
+            _restRequest = new RestRequest(method);
             _restRequest.AddHeader("Accept", "application/json");
             return _restRequest;
         }
 
-        public RestRequest CreateGetRequest(Dictionary<string, string> queryParams)
+        public RestRequest CreateRequest(Method method, dynamic value, ParameterType parameterType)
         {
-            _restRequest = new RestRequest(Method.GET);
+            _restRequest = new RestRequest(method);
             _restRequest.AddHeader("Accept", "application/json");
-            foreach (var q in queryParams)
-                _restRequest.AddQueryParameter(q.Key, q.Value);
+
+            switch (parameterType)
+            {
+                case ParameterType.QueryString:
+                    {
+                        Dictionary<string, string> values = value;
+                        foreach (var (key, s) in values) _restRequest.AddQueryParameter(key, s);
+                        break;
+                    }
+                case ParameterType.RequestBody:
+                    _restRequest.AddParameter("application/json", JsonConvert.SerializeObject(value), ParameterType.RequestBody);
+                    break;
+            }
+
             return _restRequest;
         }
 
-        public RestRequest CreateDeleteRequest()
+        public IRestResponse GetResponse(RestClient client, RestRequest request)
         {
-            _restRequest = new RestRequest(Method.DELETE);
-            _restRequest.AddHeader("Accept", "application/json");
-            return _restRequest;
-        }
-
-        public IRestResponse GetResponse(RestClient restClient, RestRequest restRequest)
-        {
-            return restClient.Execute(restRequest);
+            return client.Execute(request);
         }
 
         public DTO GetContent<DTO>(IRestResponse response)

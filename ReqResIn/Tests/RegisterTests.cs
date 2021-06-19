@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using ReqResIn.Dto;
 using ReqResIn.Helpers;
+using RestSharp;
 using System.Net;
 
 namespace ReqResIn.Tests
@@ -23,13 +24,13 @@ namespace ReqResIn.Tests
 
             var api = new RestApiHelper<RespRegister>();
             var client = api.SetUrl("/api/register");
-            var request = api.CreatePostRequest(body);
+            var request = api.CreateRequest(Method.POST, body, ParameterType.RequestBody);
             var response = api.GetResponse(client, request);
             var content = api.GetContent<RespRegister>(response);
 
-            ((HttpStatusCode) response.StatusCode).Should().Be(HttpStatusCode.OK);
-            ((RespRegister) content).Id.Should().NotBe(null);
-            ((RespRegister) content).Token.Should().NotBeNullOrWhiteSpace();
+            ((HttpStatusCode)response.StatusCode).Should().Be(HttpStatusCode.OK);
+            ((RespRegister)content).Id.Should().NotBe(null);
+            ((RespRegister)content).Token.Should().NotBeNullOrWhiteSpace();
         }
 
         [TestCase("sydney@fife")]
@@ -40,12 +41,12 @@ namespace ReqResIn.Tests
 
             var api = new RestApiHelper<RespError>();
             var client = api.SetUrl("/api/register");
-            var request = api.CreatePostRequest(body);
+            var request = api.CreateRequest(Method.POST, body, ParameterType.RequestBody);
             var response = api.GetResponse(client, request);
             var content = api.GetContent<RespError>(response);
 
-            ((HttpStatusCode) response.StatusCode).Should().Be(HttpStatusCode.BadRequest);
-            ((RespError) content).Error.Should().Be("Missing password");
+            ((HttpStatusCode)response.StatusCode).Should().Be(HttpStatusCode.BadRequest);
+            ((RespError)content).Error.Should().Be("Missing password");
         }
     }
 }
